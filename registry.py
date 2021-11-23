@@ -1,9 +1,25 @@
+from typing import Callable, Any
+from settings import INSTALLED_APPS
+
 class AppRegistry:
     def __init__(self):
-        self.registry = {}
+        self._registry = {}
     
-    def __call__(self):
-        return self.registry
+    def register(self, app: Any) -> None:
+        self._registry[app.name] = app
     
-    def register(self, app_name: str, app_func: callable, app_help: str) -> None:
-        self.registry[app_name] = {'help': app_help, 'func': app_func}
+    @property
+    def apps(self):
+        return self._registry.keys()
+
+    def app(self, app_name: str) -> Any:
+        return self._registry[app_name]
+
+
+def get_registry():
+    registry = AppRegistry()
+    for app in INSTALLED_APPS:
+        registry.register(app)
+    return registry
+
+app_registry = get_registry()
